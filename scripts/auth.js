@@ -45,12 +45,21 @@ function loginUser(){
     }
 }
 function logoutUser(){
-    //TODO: invoke kinvey REST logout
-    sessionStorage.clear();
-    $('#loggedInUser').text('').hide();
-    showHideMenuLinks();
-    showView('viewHome');
-    showInfo('Logout successful.');
+    let url=kinveyBaseUrl+'user/'+kinveyAppKey+'/_logout';
+    let logoutRequest={
+        method:"POST",
+        url,
+        headers:getKinveyAuthHeaders()
+    };
+    $.ajax(logoutRequest)
+        .then(logoutSuccess);
+    function logoutSuccess(){
+        sessionStorage.clear();
+        $('#loggedInUser').text('').hide();
+        showHideMenuLinks();
+        showView('viewHome');
+        showInfo('Logout successful.');
+    }
 }
 
 function saveAuthInSession(userInfo){
