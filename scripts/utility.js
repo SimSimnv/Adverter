@@ -1,5 +1,6 @@
-function handleAjaxError(response){
+function handleAjaxError(event,response){
     let errorMsg = JSON.stringify(response);
+    
     if (response.readyState === 0) {
         errorMsg = "Cannot connect due to network error.";
     }

@@ -14,8 +14,7 @@ function registerUser(){
         url,
         data:userData,
         headers:kinveyAppAuthHeaders,
-        success:registerSuccess,
-        error:handleAjaxError
+        success:registerSuccess
     };
     $.ajax(postRequest);
     function registerSuccess(userInfo){
@@ -35,11 +34,9 @@ function loginUser(){
         method:"POST",
         url,
         data:userData,
-        headers:kinveyAppAuthHeaders,
-        success:loginSuccess,
-        error:handleAjaxError
+        headers:kinveyAppAuthHeaders
     };
-    $.ajax(postRequest);
+    $.ajax(postRequest).then(loginSuccess)
     function loginSuccess(userInfo){
         saveAuthInSession(userInfo);
         showHideMenuLinks();

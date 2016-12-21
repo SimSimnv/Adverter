@@ -22,6 +22,7 @@ function showView(viewName){
 }
 
 function showHomeView(){
+    
     showView('viewHome')
 }
 function showLoginView(){
