@@ -85,20 +85,39 @@ function getDetailsAdd(add){
     };
     function getDetailsAddSuccess(ad){
         let div=$('<div>');
-        let img=$('<img alt="Imagine a wonderful picture here!" height="300" width="400">').attr('src',ad.image);
-        let title=$('<label>').text('Title').append($('<h1>').text(ad.title));
-        let price=$('<label>').text('Price').append($('<h2>').text(ad.price));
-        let description=$('<label>').text('Description').append($('<p>').text(ad.description));
-        let publisher=$('<label>').text('Publisher').append($('<div>').text(ad.publisher));
-        let date=$('<label>').text('Date').append($('<div>').text(ad.date));
-        div
-            .append(img)
-            .append($('<br>'))
+        let img=$('<span>').append($('<img alt="Imagine a wonderful picture here!" height="300" width="400">').attr('src',ad.image));
+
+        // let title=$('<label>').text('Title').append($('<h1>').text(ad.title));
+        // let price=$('<label>').text('Price').append($('<h2>').text(ad.price));
+        // let description=$('<label>').text('Description').append($('<p>').text(ad.description));
+        // let publisher=$('<label>').text('Publisher').append($('<div>').text(ad.publisher));
+        // let date=$('<label>').text('Date').append($('<div>').text(ad.date));
+
+        let title=$('<tr>')
+            .append($('<th>').text('Title'))
+            .append($('<td>').text(ad.title));
+        let price=$('<tr>')
+            .append($('<th>').text('Price'))
+            .append($('<td>').text(ad.price));
+        let description=$('<tr>')
+            .append($('<th>').text('Description'))
+            .append($('<td>').append($('<textarea disabled="true">').val(ad.description)));
+        let publisher=$('<tr>')
+            .append($('<th>').text('Publisher'))
+            .append($('<td>').text(ad.publisher));
+        let date=$('<tr>')
+            .append($('<th>').text('Date'))
+            .append($('<td>').text(ad.date));
+
+        let infoDiv=$('<table id="advertInfo">')
             .append(title)
             .append(price)
             .append(description)
             .append(publisher)
             .append(date)
+        div
+            .append(img)
+            .append(infoDiv)
             .appendTo('#viewDetailsAd');
 
         showView('viewDetailsAd');
@@ -155,8 +174,8 @@ function listAds(){
         }
 
         let tr=$('<tr>')
-            .append($('<td>').text(ad.title))
-            .append($('<td>').text(ad.description))
+            .append($('<td>').text(textCutter(ad.title,40)))
+            .append($('<td>').text(textCutter(ad.description,80)))
             .append($('<td>').text(ad.publisher))
             .append($('<td>').text(ad.date))
             .append($('<td>').text(ad.price))
@@ -164,6 +183,7 @@ function listAds(){
         adsTable.append(tr);
     }
 }
+
 function loadAddForEdit(add){
     let getRequest={
         method:"GET",

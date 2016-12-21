@@ -17,7 +17,12 @@ function showInfo(info){
     $('#infoBox').show();
     setTimeout(function(){$('#infoBox').fadeOut()},3000)
 }
-
+function textCutter(text,maxLength){
+    if(text.length>maxLength){
+        return text.substr(0,maxLength)+'...';
+    }
+    return text;
+}
 function validateData(title,description,publisher,date,price){
     if(title.length==0 || typeof title!='string'){
         showError('Incorrect title.');
@@ -41,3 +46,4 @@ function validateData(title,description,publisher,date,price){
     }
     return true;
 }
+
