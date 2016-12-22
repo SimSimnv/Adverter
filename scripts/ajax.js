@@ -59,8 +59,8 @@ function listAds(){
     }
 }
 
-function createAdd(){
-
+function createAdd(ev){
+    ev.preventDefault();
     let title=$('#formCreateAd input[name=title]').val();
     let description=$('#formCreateAd textarea[name=description]').val();
     let publisher=sessionStorage.getItem('username');
@@ -109,7 +109,8 @@ function loadAddForEdit(add){
     $.ajax(getRequest);
 }
 
-function editAdd(){
+function editAdd(ev){
+    ev.preventDefault();
 
     let id=$('#formEditAd input[name=id]').val();
     let publisher=$('#formEditAd input[name=publisher]').val();
@@ -155,28 +156,39 @@ function deleteAdd(add){
     $.ajax(deleteRequest)
 }
 
-function getDetailsAdd(add){
+function getDetailsAdd(add,showReviewsBool){
 
-    let getRequest={
-        method:"GET",
-        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+add._id,
-        headers:getKinveyAuthHeaders(),
-        success:getDetailsAddSuccess
-    };
+    //showReviewsBool determines how will the user reviews be displayed
 
-    $.ajax(getRequest);
+    //Kinvey requests
 
-    function getDetailsAddSuccess(ad){
+    let getAdvertPromise= $.ajax({
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+add._id,
+            headers:getKinveyAuthHeaders()
+    });
+
+    let query=`?query={"advertId":"${add._id}"}`;
+    
+    let getReviewsPromise= $.ajax({
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/userReviews'+query,
+            headers:getKinveyAuthHeaders()
+    });
+    
+    Promise.all([getAdvertPromise,getReviewsPromise])
+        .then(getDetailsAddSuccess);
+
+    //Success callback
+
+    function getDetailsAddSuccess([ad,reviews]){
         $('#viewDetailsAd').empty();
 
-        let div=$('<div>');
+        //Attach the advert info
+
+        let adDiv=$('<div>');
         let img=$('<span>').append($('<img alt="Imagine a wonderful picture here!" height="300" width="400">').attr('src',ad.image));
 
-        // let title=$('<label>').text('Title').append($('<h1>').text(ad.title));
-        // let price=$('<label>').text('Price').append($('<h2>').text(ad.price));
-        // let description=$('<label>').text('Description').append($('<p>').text(ad.description));
-        // let publisher=$('<label>').text('Publisher').append($('<div>').text(ad.publisher));
-        // let date=$('<label>').text('Date').append($('<div>').text(ad.date));
 
         let title=$('<tr>')
             .append($('<th>').text('Title'))
@@ -199,16 +211,176 @@ function getDetailsAdd(add){
             .append(price)
             .append(description)
             .append(publisher)
-            .append(date)
-        div
+            .append(date);
+
+        //Attach advert buttons
+
+        let showReviewsButton=$('<input type="button">').val('User Reviews').on('click',showHideReviews);
+        let addReviewButton=$('<input type="button">').val('Post review').on('click',showHideCreateForm);
+        let showPurchaseOptionButton=$('<input type="button">').val('Purchase').on('click',function(){alert('buy')});
+        let adButtons=$('<div id="advertButtons">')
+            .append(showReviewsButton)
+            .append(addReviewButton)
+            .append(showPurchaseOptionButton);
+
+        //Attach the create and edit review form
+
+        let createReviewForm=$('<form id="createReviewForm" >')
+            .css('display','none')
+            .append($('<div>')
+                .append($('<div>').text('Create review:'))
+                .append($('<textarea name="body" rows="3" required="true">'))
+            )
+            .append($('<input type="submit">').val('Create'))
+            .on('submit',function (ev){
+                ev.preventDefault();
+                createReview(add)
+            });
+
+
+        let editReviewForm=$('<form id="editReviewForm">')
+            .css('display','none')
+            .append($('<input name="idHolder" disabled>').css('display','none'))
+            .append($('<div>')
+                .append($('<div>').text('Edit review:'))
+                .append($('<textarea name="body" rows="3" required="true">'))
+            )
+            .append($('<input type="submit">').val('Edit'))
+            .on('submit',function (ev){
+                ev.preventDefault();
+                editReview(add,$('#editReviewForm input[name=idHolder]').val())
+            });
+
+        //Attach all user reviews
+
+        let reviewsDiv=$('<div id="userReviews">');
+
+        for(let review of reviews){
+
+            let userReview=$('<div class="userReview">')
+                .append($('<div>').append($('<i>').text(review.text)))
+                .append($('<div class="reviewDetails">').text(`Commented by ${review.author} on ${formatDate(review._kmd.lmt)}`));
+
+            //Creator can edit/delete his reviews
+            if(review._acl.creator==sessionStorage.getItem('userId')){
+                userReview.append($('<button>').text('Delete').on('click',function(){deleteReview(add,review._id)}))
+                userReview.append($('<button>').text('Edit').on('click',function(){
+                    $('#editReviewForm input[name=idHolder]').val(review._id);
+                    $('#editReviewForm textarea[name=body]').val(review.text);
+                    $('#editReviewForm').show();
+                    $('#createReviewForm').hide();
+                    $("html, body").animate({ scrollTop: 0 }, "slow");
+
+                }))
+            }
+
+            reviewsDiv.append(userReview);
+
+        }
+
+        // If the advert details page is opened for the first time the reviews are hidden by default, else the screen points towards the edited/created content
+
+        if(!showReviewsBool){
+            reviewsDiv.css('display','none');
+        }
+        else{
+            $("html, body").animate({ scrollTop:  $(document).height()}, "slow");
+        }
+
+        // All the elements are attached and the main section is displayed
+        adDiv
             .append(img)
             .append(infoDiv)
+            .append($('<br/>'))
+            .append(adButtons)
+            .append(createReviewForm)
+            .append(editReviewForm)
+            .append(reviewsDiv)
             .appendTo('#viewDetailsAd');
 
         showView('viewDetailsAd');
     }
 
+
+
+    function showHideReviews(){
+        let reviewDiv=$('#userReviews');
+        if(reviewDiv.css('display')=='none'){
+            reviewDiv.show();
+        }
+        else{
+            reviewDiv.hide();
+        }
+    }
+
+    function showHideCreateForm(){
+        $('#editReviewForm').hide();
+        let createForm=$('#createReviewForm');
+        if(createForm.css('display')=='none'){
+            createForm.show();
+        }
+        else{
+            createForm.hide();
+        }
+    }
+
+
 }
 
+function createReview(add){
+    let advertId=add._id;
+    let text=$('#createReviewForm textarea[name=body]').val();
+    let postData={author:sessionStorage.getItem('username'),text,advertId};
+    let postRequest={
+        method:"POST",
+        url: kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews',
+        headers:getKinveyAuthHeaders(),
+        data:postData
+    };
+    $.ajax(postRequest)
+        .then(createReviewSuccess);
 
+    function createReviewSuccess(){
+        showInfo('Review created.');
+        getDetailsAdd(add,true);
+    }
+}
+
+function deleteReview(add,reviewId){
+    let deleteRequest={
+        method:"DELETE",
+        url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews/'+reviewId,
+        headers:getKinveyAuthHeaders()
+    };
+
+    $.ajax(deleteRequest)
+        .then(deleteSuccess);
+
+    function deleteSuccess(){
+        showInfo('Review deleted.');
+        getDetailsAdd(add,true);
+    }
+}
+
+function editReview(add,reviewId){
+
+    let text=$('#editReviewForm textarea[name=body]').val();
+    let author=sessionStorage.getItem('username');
+    let putData={author,text,advertId:add._id};
+
+    let putRequest={
+        method:"PUT",
+        url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews/'+reviewId,
+        headers:getKinveyAuthHeaders(),
+        data:putData
+    };
+    
+    $.ajax(putRequest)
+        .then(editSuccess);
+    
+    function editSuccess(){
+        showInfo('Review edited.')
+        getDetailsAdd(add,true);
+    }
+}
 

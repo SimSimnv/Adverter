@@ -3,7 +3,8 @@ const kinveyAppKey='kid_BJp9nsvr';
 const kinveyAppSecret='4a62943b30954e60a7a5b1994b36cb2c';
 const kinveyAppAuthHeaders={'Authorization':'Basic '+btoa(kinveyAppKey+':'+kinveyAppSecret)};
 
-function registerUser(){
+function registerUser(ev){
+    ev.preventDefault();
     let userData={
         username:$('#viewRegister input[name=username]').val(),
         password:$('#viewRegister input[name=passwd]').val()
@@ -24,7 +25,8 @@ function registerUser(){
         showInfo('User registration successful.')
     }
 }
-function loginUser(){
+function loginUser(ev){
+    ev.preventDefault();
     let userData={
         username:$('#formLogin input[name=username]').val(),
         password:$('#formLogin input[name=passwd]').val()
