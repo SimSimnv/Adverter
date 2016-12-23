@@ -25,7 +25,7 @@
       <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
+            <state relative-caret-position="252">
               <caret line="120" column="14" selection-start-line="120" selection-start-column="14" selection-end-line="120" selection-end-column="14" />
               <folding>
                 <element signature="n#section#4;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
@@ -77,8 +77,8 @@
       <file leaf-file-name="ajax.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/scripts/ajax.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="245" column="73" selection-start-line="245" selection-start-column="73" selection-end-line="245" selection-end-column="73" />
+            <state relative-caret-position="416">
+              <caret line="443" column="18" selection-start-line="443" selection-start-column="18" selection-end-line="443" selection-end-column="18" />
               <folding>
                 <element signature="n#!!block;n#listAds#0" expanded="false" />
                 <element signature="n#!!block;n#appendAdRow#0;n#!!block;n#listAds#0" expanded="false" />
@@ -86,8 +86,12 @@
                 <element signature="n#!!block;n#loadAddForEdit#0" expanded="false" />
                 <element signature="n#!!block;n#editAdd#0" expanded="false" />
                 <element signature="n#!!block;n#deleteAdd#0" expanded="false" />
+                <element signature="n#!!block;n#getDetailsAdd#0" expanded="false" />
+                <element signature="n#!!block;n#getDetailsAddSuccess#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
                 <element signature="n#!!block;n#showHideReviews#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
                 <element signature="n#!!block;n#showHideCreateForm#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+                <element signature="n#!!block;n#showHidePurchaseDetails#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+                <element signature="n#!!block;n#changeTotalPrice#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
                 <element signature="n#!!block;n#createReview#0" expanded="false" />
                 <element signature="n#!!block;n#deleteReview#0" expanded="false" />
                 <element signature="n#!!block;n#editReview#0" expanded="false" />
@@ -148,10 +152,10 @@
         <option value="$PROJECT_DIR$/styles/prodavachnik.css" />
         <option value="$PROJECT_DIR$/scripts/views.js" />
         <option value="$PROJECT_DIR$/scripts/adverter.js" />
-        <option value="$PROJECT_DIR$/styles/adverter.css" />
         <option value="$PROJECT_DIR$/scripts/auth.js" />
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/scripts/utility.js" />
+        <option value="$PROJECT_DIR$/styles/adverter.css" />
         <option value="$PROJECT_DIR$/scripts/ajax.js" />
       </list>
     </option>
@@ -208,6 +212,34 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Prodavachnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Prodavachnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Prodavachnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="styles" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Prodavachnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Prodavachnik" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -319,12 +351,12 @@
       <workItem from="1479912302235" duration="8000" />
       <workItem from="1479912369446" duration="350000" />
       <workItem from="1480668704618" duration="258000" />
-      <workItem from="1482318753477" duration="25722000" />
+      <workItem from="1482318753477" duration="32853000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="62147000" />
+    <option name="totallyTimeSpent" value="69278000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1384" height="738" extended-state="7" />
@@ -382,7 +414,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="16" />
+      <option name="time" value="18" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -444,8 +476,12 @@
             <element signature="n#!!block;n#loadAddForEdit#0" expanded="false" />
             <element signature="n#!!block;n#editAdd#0" expanded="false" />
             <element signature="n#!!block;n#deleteAdd#0" expanded="false" />
+            <element signature="n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#getDetailsAddSuccess#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#showHideReviews#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#showHideCreateForm#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#showHidePurchaseDetails#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#changeTotalPrice#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#createReview#0" expanded="false" />
             <element signature="n#!!block;n#deleteReview#0" expanded="false" />
             <element signature="n#!!block;n#editReview#0" expanded="false" />
@@ -645,14 +681,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/styles/adverter.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="181" column="14" selection-start-line="181" selection-start-column="14" selection-end-line="181" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/views.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -679,6 +707,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/auth.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+          <folding>
+            <element signature="n#!!block;n#registerUser#0" expanded="false" />
+            <element signature="n#!!block;n#loginUser#0" expanded="false" />
+            <element signature="n#!!block;n#logoutUser#0" expanded="false" />
+            <element signature="n#!!block;n#saveAuthInSession#0" expanded="false" />
+            <element signature="n#!!block;n#getKinveyAuthHeaders#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="120" column="14" selection-start-line="120" selection-start-column="14" selection-end-line="120" selection-end-column="14" />
+          <folding>
+            <element signature="n#section#4;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#section#5;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#section#6;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#section#7;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#section#8;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#section#9;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+            <element signature="n#script#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/styles/adverter.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="199" column="26" selection-start-line="199" selection-start-column="26" selection-end-line="199" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/utility.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="100">
@@ -694,40 +760,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="120" column="14" selection-start-line="120" selection-start-column="14" selection-end-line="120" selection-end-column="14" />
-          <folding>
-            <element signature="n#section#4;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#section#5;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#section#6;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#section#7;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#section#8;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#section#9;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-            <element signature="n#script#0;n#main#0;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/auth.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="5" column="25" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
-          <folding>
-            <element signature="n#!!block;n#registerUser#0" expanded="false" />
-            <element signature="n#!!block;n#loginUser#0" expanded="false" />
-            <element signature="n#!!block;n#logoutUser#0" expanded="false" />
-            <element signature="n#!!block;n#saveAuthInSession#0" expanded="false" />
-            <element signature="n#!!block;n#getKinveyAuthHeaders#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/scripts/ajax.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="245" column="73" selection-start-line="245" selection-start-column="73" selection-end-line="245" selection-end-column="73" />
+        <state relative-caret-position="416">
+          <caret line="443" column="18" selection-start-line="443" selection-start-column="18" selection-end-line="443" selection-end-column="18" />
           <folding>
             <element signature="n#!!block;n#listAds#0" expanded="false" />
             <element signature="n#!!block;n#appendAdRow#0;n#!!block;n#listAds#0" expanded="false" />
@@ -735,8 +771,12 @@
             <element signature="n#!!block;n#loadAddForEdit#0" expanded="false" />
             <element signature="n#!!block;n#editAdd#0" expanded="false" />
             <element signature="n#!!block;n#deleteAdd#0" expanded="false" />
+            <element signature="n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#getDetailsAddSuccess#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#showHideReviews#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#showHideCreateForm#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#showHidePurchaseDetails#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
+            <element signature="n#!!block;n#changeTotalPrice#0;n#!!block;n#getDetailsAdd#0" expanded="false" />
             <element signature="n#!!block;n#createReview#0" expanded="false" />
             <element signature="n#!!block;n#deleteReview#0" expanded="false" />
             <element signature="n#!!block;n#editReview#0" expanded="false" />

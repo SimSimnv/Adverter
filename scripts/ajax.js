@@ -1,6 +1,5 @@
 function listAds(){
 
-
     let getRequest={
         method:"GET",
         url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements',
@@ -169,13 +168,13 @@ function getDetailsAdd(add,showReviewsBool){
     });
 
     let query=`?query={"advertId":"${add._id}"}`;
-    
+
     let getReviewsPromise= $.ajax({
             method:"GET",
             url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/userReviews'+query,
             headers:getKinveyAuthHeaders()
     });
-    
+
     Promise.all([getAdvertPromise,getReviewsPromise])
         .then(getDetailsAddSuccess);
 
@@ -217,7 +216,8 @@ function getDetailsAdd(add,showReviewsBool){
 
         let showReviewsButton=$('<input type="button">').val('User Reviews').on('click',showHideReviews);
         let addReviewButton=$('<input type="button">').val('Post review').on('click',showHideCreateForm);
-        let showPurchaseOptionButton=$('<input type="button">').val('Purchase').on('click',function(){alert('buy')});
+        let showPurchaseOptionButton=$('<input type="button">').val('Purchase').on('click',showHidePurchaseDetails);
+
         let adButtons=$('<div id="advertButtons">')
             .append(showReviewsButton)
             .append(addReviewButton)
@@ -251,6 +251,20 @@ function getDetailsAdd(add,showReviewsBool){
                 editReview(add,$('#editReviewForm input[name=idHolder]').val())
             });
 
+        //Attach the purchase details
+
+        let purchaseDetailsDiv=$('<div id="purchaseDetails">')
+            .css('display','none')
+            .append($('<label>').text('Ammount: '))
+            .append($('<input type="number" value="1" min="1" name="ammount">').on('input',changeTotalPrice))
+            .append($('<div id="totalPrice">').text(`Total price: 1 X ${ad.price} = ${ad.price}`))
+            .append($('<input type="button">').val('Confirm purchase').on('click',function(){purchaseItem(add)}));
+
+        let createEditPurchaseBox=$('<div id="createEditPurchaseBox">')
+            .append(createReviewForm)
+            .append(editReviewForm)
+            .append(purchaseDetailsDiv);
+
         //Attach all user reviews
 
         let reviewsDiv=$('<div id="userReviews">');
@@ -269,6 +283,7 @@ function getDetailsAdd(add,showReviewsBool){
                     $('#editReviewForm textarea[name=body]').val(review.text);
                     $('#editReviewForm').show();
                     $('#createReviewForm').hide();
+                    $('#purchaseDetails').hide();
                     $("html, body").animate({ scrollTop: 0 }, "slow");
 
                 }))
@@ -293,15 +308,12 @@ function getDetailsAdd(add,showReviewsBool){
             .append(infoDiv)
             .append($('<br/>'))
             .append(adButtons)
-            .append(createReviewForm)
-            .append(editReviewForm)
+            .append(createEditPurchaseBox)
             .append(reviewsDiv)
             .appendTo('#viewDetailsAd');
 
         showView('viewDetailsAd');
     }
-
-
 
     function showHideReviews(){
         let reviewDiv=$('#userReviews');
@@ -315,6 +327,7 @@ function getDetailsAdd(add,showReviewsBool){
 
     function showHideCreateForm(){
         $('#editReviewForm').hide();
+        $('#purchaseDetails').hide();
         let createForm=$('#createReviewForm');
         if(createForm.css('display')=='none'){
             createForm.show();
@@ -324,7 +337,31 @@ function getDetailsAdd(add,showReviewsBool){
         }
     }
 
+    function showHidePurchaseDetails(){
+        $('#editReviewForm').hide();
+        $('#createReviewForm').hide();
+        let purchaseDiv=$('#purchaseDetails');
+        if(purchaseDiv.css('display')=='none'){
+            purchaseDiv.show();
+        }
+        else{
+            purchaseDiv.hide();
+        }
+    }
 
+    function changeTotalPrice(){
+        let purchaseAmmountInput=$('#purchaseDetails input[name=ammount]');
+        let quantity=parseInt(purchaseAmmountInput.val());
+        if(quantity<=0||!quantity){
+            quantity=1;
+        }
+        purchaseAmmountInput.val(quantity);
+
+
+        let price=Number(add.price);
+        let totalPrice=quantity*price;
+        $('#totalPrice').text(`Total price: ${quantity} X ${price} = ${totalPrice.toFixed(2)}`)
+    }
 }
 
 function createReview(add){
@@ -381,6 +418,30 @@ function editReview(add,reviewId){
     function editSuccess(){
         showInfo('Review edited.')
         getDetailsAdd(add,true);
+    }
+}
+
+function purchaseItem(advert){
+    let title=advert.title;
+    let price=advert.price;
+    let quantity=$('#purchaseDetails input[name=ammount]').val();
+    let advertId=advert._id;
+
+    let postData={title,price,quantity,advertId};
+
+    let postRequest={
+        method:"POST",
+        url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userPurchases/',
+        headers:getKinveyAuthHeaders(),
+        data:postData
+    };
+
+    $.ajax(postRequest)
+        .then(purchaseSuccess);
+
+    function purchaseSuccess(){
+        showInfo('Purchase successful.')
+        listAds();
     }
 }
 
