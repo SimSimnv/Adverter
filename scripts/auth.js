@@ -21,7 +21,7 @@ function registerUser(ev){
     function registerSuccess(userInfo){
         saveAuthInSession(userInfo);
         showHideMenuLinks();
-        listAds();
+        $(location).attr('href',`#/ads`);
         showInfo('User registration successful.')
     }
 }
@@ -38,12 +38,12 @@ function loginUser(ev){
         data:userData,
         headers:kinveyAppAuthHeaders
     };
-    $.ajax(postRequest).then(loginSuccess)
+    $.ajax(postRequest).then(loginSuccess);
     function loginSuccess(userInfo){
         saveAuthInSession(userInfo);
         showHideMenuLinks();
-        listAds();
-        showInfo('Login successful.')
+        $(location).attr('href',`#/ads`);
+        showInfo('Login successful.');
     }
 }
 function logoutUser(){
@@ -59,7 +59,7 @@ function logoutUser(){
         sessionStorage.clear();
         $('#loggedInUser').text('').hide();
         showHideMenuLinks();
-        showView('viewHome');
+        $(location).attr('href',`#/home`);
         showInfo('Logout successful.');
     }
 }

@@ -6,14 +6,7 @@ function startApp() {
     showHideMenuLinks();
 
     showView('viewHome');
-
-    //Bind the navigation links
-    $('#linkHome').click(showHomeView);
-    $('#linkLogin').click(showLoginView);
-    $('#linkRegister').click(showRegisterView);
-    $('#linkListAds').click(listAds);
-    $('#linkCreateAd').click(showCreateAdView);
-    $('#linkLogout').click(logoutUser);
+    
 
     // //Bind the submit buttons
      $('#buttonLoginUser').click(loginUser);
@@ -31,6 +24,86 @@ function startApp() {
     });
     $(document).ajaxError(handleAjaxError);
 
+
+    let sammyApp=Sammy('main',function(){
+        this.get('#/',function(){
+            this.redirect('#/home');
+        });
+        this.get('#/home',function(){
+            showHomeView()
+        });
+        this.get('#/login',function(){
+            if(sessionStorage.getItem('userId')){
+                this.redirect('#/home');
+            }
+            else{
+                showLoginView();
+            }
+        });
+        this.get('#/register',function(){
+            if(sessionStorage.getItem('userId')){
+                this.redirect('#/home');
+            }
+            else{
+                showRegisterView();
+            }
+        });
+
+        this.get('#/ads',function(){
+            if(sessionStorage.getItem('userId')){
+                listAds()
+            }
+            else{
+                this.redirect('#/home');
+            }
+        });
+
+        this.get('#/ads/:id',function(){
+            if(sessionStorage.getItem('userId')){
+                if(this.params.showRev)
+                    getDetailsAdd(this.params.id,true);
+                else
+                    getDetailsAdd(this.params.id);
+            }
+            else{
+                this.redirect('#/home');
+            }
+        });
+
+        this.get('#/ads/edit/:id',function(){
+            if(sessionStorage.getItem('userId')){
+                loadAddForEdit(this.params.id);
+            }
+            else{
+                this.redirect('#/home');
+            }
+        });
+
+        this.get('#/createAd',function(){
+            if(sessionStorage.getItem('userId')){
+                showCreateAdView()
+            }
+            else{
+                this.redirect('#/home');
+            }
+            
+        });
+        this.get('#/logout',function(){
+            if(sessionStorage.getItem('userId')){
+                logoutUser();
+            }
+            else{
+                this.redirect('#/home');
+            }
+            
+        });
+        
+
+    });
+    
+    $(function(){
+        sammyApp.run('#/');
+    })
 
 
 }

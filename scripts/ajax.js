@@ -36,11 +36,11 @@ function listAds(){
     function appendAdRow(ad,adsTable){
         let links=[];
 
-        let detailsLink=$('<a href="#">').text('[Read More]').on('click',function(){getDetailsAdd(ad)});
+        let detailsLink=$(`<a href="#/ads/${ad._id}">`).text('[Read More]')
         links.push(detailsLink);
         if(ad._acl.creator == sessionStorage.getItem('userId')){
             let deleteLink=$('<a href="#">').text('[Delete]').on('click',function(){deleteAdd(ad)});
-            let editLink=$('<a href="#">').text('[Edit]').on('click',function(){loadAddForEdit(ad)});
+            let editLink=$(`<a href="#/ads/edit/${ad._id}">`).text('[Edit]');
             links.push(' ');
             links.push(deleteLink);
             links.push(' ');
@@ -80,18 +80,18 @@ function createAdd(ev){
         };
 
         function createAddSuccess() {
-            listAds();
             showInfo('Advertisement created.')
+            $(location).attr('href',`#/ads`);
         }
 
         $.ajax(postRequest);
     }
 }
 
-function loadAddForEdit(add){
+function loadAddForEdit(advertId){
     let getRequest={
         method:"GET",
-        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+add._id,
+        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+advertId,
         headers:getKinveyAuthHeaders(),
         success:loadAddForEditSuccess
     };
@@ -133,8 +133,8 @@ function editAdd(ev){
         };
 
         function editAddSuccess() {
-            listAds();
-            showInfo('Advertisement edited.')
+            showInfo('Advertisement edited.');
+            $(location).attr('href',`#/ads`)
         }
 
         $.ajax(putRequest)
@@ -149,25 +149,25 @@ function deleteAdd(add){
         success:deleteAddSuccess
     };
     function deleteAddSuccess(){
-        listAds();
-        showInfo('Advertisement deleted.')
+        showInfo('Advertisement deleted.');
+        $(location).attr('href',`#/ads`);
     }
     $.ajax(deleteRequest)
 }
 
-function getDetailsAdd(add,showReviewsBool){
+function getDetailsAdd(advertId,showReviewsBool){
 
     //showReviewsBool determines how will the user reviews be displayed
-
+    
     //Kinvey requests
-
+    
     let getAdvertPromise= $.ajax({
             method:"GET",
-            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+add._id,
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+advertId,
             headers:getKinveyAuthHeaders()
     });
 
-    let query=`?query={"advertId":"${add._id}"}`;
+    let query=`?query={"advertId":"${advertId}"}`;
 
     let getReviewsPromise= $.ajax({
             method:"GET",
@@ -229,13 +229,8 @@ function getDetailsAdd(add,showReviewsBool){
             .css('display','none')
             .append($('<div>')
                 .append($('<div>').text('Create review:'))
-                .append($('<textarea name="body" rows="3" required="true">'))
-            )
-            .append($('<input type="submit">').val('Create'))
-            .on('submit',function (ev){
-                ev.preventDefault();
-                createReview(add)
-            });
+                .append($('<textarea name="body" rows="3" required="true">')))
+            .append($('<input type="button">').val('Create').on('click',function (){createReview(advertId)}));
 
 
         let editReviewForm=$('<form id="editReviewForm">')
@@ -245,11 +240,9 @@ function getDetailsAdd(add,showReviewsBool){
                 .append($('<div>').text('Edit review:'))
                 .append($('<textarea name="body" rows="3" required="true">'))
             )
-            .append($('<input type="submit">').val('Edit'))
-            .on('submit',function (ev){
-                ev.preventDefault();
-                editReview(add,$('#editReviewForm input[name=idHolder]').val())
-            });
+            .append($('<input type="button">').val('Edit').on('click',function (){
+                editReview(advertId,$('#editReviewForm input[name=idHolder]').val())
+            }));
 
         //Attach the purchase details
 
@@ -258,7 +251,7 @@ function getDetailsAdd(add,showReviewsBool){
             .append($('<label>').text('Ammount: '))
             .append($('<input type="number" value="1" min="1" name="ammount">').on('input',changeTotalPrice))
             .append($('<div id="totalPrice">').text(`Total price: 1 X ${ad.price} = ${ad.price}`))
-            .append($('<input type="button">').val('Confirm purchase').on('click',function(){purchaseItem(add)}));
+            .append($('<input type="button">').val('Confirm purchase').on('click',function(){purchaseItem(ad)}));
 
         let createEditPurchaseBox=$('<div id="createEditPurchaseBox">')
             .append(createReviewForm)
@@ -277,7 +270,7 @@ function getDetailsAdd(add,showReviewsBool){
 
             //Creator can edit/delete his reviews
             if(review._acl.creator==sessionStorage.getItem('userId')){
-                userReview.append($('<button>').text('Delete').on('click',function(){deleteReview(add,review._id)}))
+                userReview.append($('<button>').text('Delete').on('click',function(){deleteReview(advertId,review._id)}))
                 userReview.append($('<button>').text('Edit').on('click',function(){
                     $('#editReviewForm input[name=idHolder]').val(review._id);
                     $('#editReviewForm textarea[name=body]').val(review.text);
@@ -313,6 +306,21 @@ function getDetailsAdd(add,showReviewsBool){
             .appendTo('#viewDetailsAd');
 
         showView('viewDetailsAd');
+
+
+        function changeTotalPrice(){
+            let purchaseAmmountInput=$('#purchaseDetails input[name=ammount]');
+            let quantity=parseInt(purchaseAmmountInput.val());
+            if(quantity<=0||!quantity){
+                quantity=1;
+            }
+            purchaseAmmountInput.val(quantity);
+
+
+            let price=Number(ad.price);
+            let totalPrice=quantity*price;
+            $('#totalPrice').text(`Total price: ${quantity} X ${price} = ${totalPrice.toFixed(2)}`)
+        }
     }
 
     function showHideReviews(){
@@ -349,23 +357,9 @@ function getDetailsAdd(add,showReviewsBool){
         }
     }
 
-    function changeTotalPrice(){
-        let purchaseAmmountInput=$('#purchaseDetails input[name=ammount]');
-        let quantity=parseInt(purchaseAmmountInput.val());
-        if(quantity<=0||!quantity){
-            quantity=1;
-        }
-        purchaseAmmountInput.val(quantity);
-
-
-        let price=Number(add.price);
-        let totalPrice=quantity*price;
-        $('#totalPrice').text(`Total price: ${quantity} X ${price} = ${totalPrice.toFixed(2)}`)
-    }
 }
 
-function createReview(add){
-    let advertId=add._id;
+function createReview(advertId){
     let text=$('#createReviewForm textarea[name=body]').val();
     let postData={author:sessionStorage.getItem('username'),text,advertId};
     let postRequest={
@@ -379,11 +373,13 @@ function createReview(add){
 
     function createReviewSuccess(){
         showInfo('Review created.');
-        getDetailsAdd(add,true);
+
+        $(location).attr('href',`#/ads/${advertId}`);
+        $(location).attr('href',`#/ads/${advertId}?showRev=true`);
     }
 }
 
-function deleteReview(add,reviewId){
+function deleteReview(advertId,reviewId){
     let deleteRequest={
         method:"DELETE",
         url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews/'+reviewId,
@@ -395,15 +391,17 @@ function deleteReview(add,reviewId){
 
     function deleteSuccess(){
         showInfo('Review deleted.');
-        getDetailsAdd(add,true);
+
+        $(location).attr('href',`#/ads/${advertId}`);
+        $(location).attr('href',`#/ads/${advertId}?showRev=true`);
     }
 }
 
-function editReview(add,reviewId){
+function editReview(advertId,reviewId){
 
     let text=$('#editReviewForm textarea[name=body]').val();
     let author=sessionStorage.getItem('username');
-    let putData={author,text,advertId:add._id};
+    let putData={author,text,advertId};
 
     let putRequest={
         method:"PUT",
@@ -417,7 +415,9 @@ function editReview(add,reviewId){
     
     function editSuccess(){
         showInfo('Review edited.')
-        getDetailsAdd(add,true);
+
+        $(location).attr('href',`#/ads/${advertId}`);
+        $(location).attr('href',`#/ads/${advertId}?showRev=true`);
     }
 }
 
@@ -440,8 +440,10 @@ function purchaseItem(advert){
         .then(purchaseSuccess);
 
     function purchaseSuccess(){
-        showInfo('Purchase successful.')
-        listAds();
+        showInfo('Purchase successful.');
+
+        $(location).attr('href',`#/ads`);
+        
     }
 }
 
