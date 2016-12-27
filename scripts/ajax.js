@@ -8,6 +8,8 @@ function listAds(){
     };
     $.ajax(getRequest);
 
+    //Success callback
+
     function loadAdsSuccess(ads){
         showInfo('Advertisements loaded');
         $('#ads').empty();
@@ -50,7 +52,7 @@ function listAds(){
         let tr=$('<tr>')
             .append($('<td>').text(textCutter(ad.title,40)))
             .append($('<td>').text(textCutter(ad.description,80)))
-            .append($('<td>').text(ad.publisher))
+            .append($('<td>').append($(`<a href="#/user/${ad._acl.creator}">`).text(ad.publisher)))
             .append($('<td>').text(ad.date))
             .append($('<td>').text(ad.price))
             .append($('<td>').append(links));
@@ -200,7 +202,7 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append($('<td>').append($('<textarea disabled="true">').val(ad.description)));
         let publisher=$('<tr>')
             .append($('<th>').text('Publisher'))
-            .append($('<td>').text(ad.publisher));
+            .append($('<td>').append($(`<a href="#/user/${ad._acl.creator}">`).text(ad.publisher)));
         let date=$('<tr>')
             .append($('<th>').text('Date'))
             .append($('<td>').text(ad.date));
@@ -261,7 +263,9 @@ function getDetailsAdd(advertId,showReviewsBool){
         //Attach all user reviews
 
         let reviewsDiv=$('<div id="userReviews">');
-
+        if(reviews.length==0){
+            reviewsDiv.append($('<div class="userReview">').text('No reviews for this advert.'));
+        }
         for(let review of reviews){
 
             let userReview=$('<div class="userReview">')
@@ -305,7 +309,7 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append(reviewsDiv)
             .appendTo('#viewDetailsAd');
 
-        showView('viewDetailsAd');
+        showDetailsAdView();
 
 
         function changeTotalPrice(){
@@ -426,8 +430,10 @@ function purchaseItem(advert){
     let price=advert.price;
     let quantity=$('#purchaseDetails input[name=ammount]').val();
     let advertId=advert._id;
+    let sellerId=advert._acl.creator;
+    let buyerName=sessionStorage.getItem('username');
 
-    let postData={title,price,quantity,advertId};
+    let postData={title,price,quantity,advertId,sellerId,buyerName};
 
     let postRequest={
         method:"POST",
@@ -442,8 +448,263 @@ function purchaseItem(advert){
     function purchaseSuccess(){
         showInfo('Purchase successful.');
 
-        $(location).attr('href',`#/ads`);
+        $(location).attr('href',`#/user/${sessionStorage.getItem('userId')}`);
         
     }
 }
 
+function getUserDetails(userId){
+
+    let loggedInUserId=sessionStorage.getItem('userId');
+
+    // User details for the logged in user
+
+    if(userId==loggedInUserId){
+        let advertisementsQuery=`?query={"_acl.creator":"${userId}"}`;
+        let userAdvertsRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements'+advertisementsQuery,
+            headers:getKinveyAuthHeaders()
+        };
+        let advertisementsPromise=$.ajax(userAdvertsRequest);
+
+
+        let salesQuery=`?query={"sellerId":"${loggedInUserId}"}`;
+        let salesRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/userPurchases'+salesQuery,
+            headers:getKinveyAuthHeaders()
+        };
+        let salesPromise=$.ajax(salesRequest);
+
+
+        let purchasesQuery=`?query={"_acl.creator":"${loggedInUserId}"}`;
+        let purchasesRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/userPurchases'+purchasesQuery,
+            headers:getKinveyAuthHeaders()
+        };
+        let purchasesPromise=$.ajax(purchasesRequest);
+
+
+        let userRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'user/'+kinveyAppKey+'/'+loggedInUserId,
+            headers:getKinveyAuthHeaders()
+        };
+        let userPromise=$.ajax(userRequest);
+
+        Promise.all([advertisementsPromise,salesPromise,purchasesPromise,userPromise])
+            .then(detailsLoadSuccess);
+
+
+        //Success callback
+
+        function detailsLoadSuccess([advertisements,sales,purchases,user]){
+
+            showInfo('User profile loaded');
+
+            let userDetails=$('#userDetails');
+            userDetails.empty();
+
+
+
+            //User Advertisements
+
+            let myAdverts=$('<div id="myAdverts">')
+                .css('display','inline-block')
+                .append($('<h3>').text('My adverts'));
+
+            let advertTable=$('<table>');
+
+            if(advertisements.length>0){
+                advertTable
+                    .append($('<tr>')
+                        .append($('<th>').text('Title'))
+                        .append($('<th>').text('Price'))
+                        .append($('<th>').text('Buyers'))
+                    );
+                for(let advert of advertisements){
+                    let advertSales=sales.filter(x=>x.advertId==advert._id);
+
+
+                    //Sales of the advertisement
+                    let salesInfo=$('<div>');
+
+                    if(advertSales.length>0){
+                        salesInfo
+                            .css('display','none')
+                            .append($('<tr>')
+                                .append($('<th>').text('Buyer'))
+                                .append($('<th>').text('Ammount'))
+                                .append($('<th>').text('Total')));
+
+                        for(let sale of advertSales){
+                            salesInfo
+                                .append($('<tr>')
+                                    .append(
+                                        $('<td>').append($(`<a href="#/user/${sale._acl.creator}">`).text(sale.buyerName))
+                                    )
+                                    .append($('<td>').text(sale.quantity))
+                                    .append($('<td>').text(Number(sale.quantity)*Number(sale.price))))
+                        }
+                    }
+                    else{
+                        salesInfo.css('display','none').append($('<tr>').append($('<td>').text('No sales')));
+                    }
+
+
+                    advertTable
+                        .append($('<tr>')
+                            .append($('<td>').append($(`<a href="#/ads/${advert._id}">`).text(advert.title)))
+                            .append($('<td>').text(advert.price))
+                            .append($('<td>').append($('<input type="button">')
+                                .val(advertSales.length)
+                                .on('click',function(){showHideSalesInfo(salesInfo)})
+                            ))
+                        )
+                        .append(salesInfo);
+                }
+
+            }
+            else{
+                advertTable.append($('<tr>').append($('<td>').text('No advertisements')));
+            }
+            myAdverts.append(advertTable);
+
+            function showHideSalesInfo(salesInfo){
+                if(salesInfo.css('display')=='none'){
+                    salesInfo.show();
+                }
+                else{
+                    salesInfo.hide();
+                }
+            }
+
+            //User Purchases
+
+            let myPurchases=$('<div id="myPurchases">')
+                .css('display','inline-block').css('padding-left','10px')
+                .append($('<h3>').text('My purchases'));
+            let purchasesTable=$('<table>');
+
+            if(purchases.length>0){
+                purchasesTable
+                    .append($('<tr>')
+                        .append($('<th>').text('Title'))
+                        .append($('<th>').text('Ammount'))
+                        .append($('<th>').text('Price'))
+                        .append($('<th>').text('Total'))
+                        .append($('<th>').text('Action'))
+                    );
+                for(let purchase of purchases){
+                    purchasesTable
+                        .append($('<tr>')
+                            .append($('<td>').append($(`<a href="#/ads/${purchase.advertId}">`).text(purchase.title)))
+                            .append($('<td>').text(purchase.quantity))
+                            .append($('<td>').text(purchase.price))
+                            .append($('<td>').text(Number(purchase.price)*Number(purchase.quantity)))
+                            .append($('<td>').append($('<input type="button">').val('Cancel purchase').on('click',function(){cancelPurchase(purchase._id,userId)})))
+                        );
+                }
+            }
+            else{
+                purchasesTable.append($('<tr>').append($('<td>').text('No purchases')));
+            }
+
+            myPurchases.append(purchasesTable);
+
+            userDetails
+                .append($('<h1>').text(user.username))
+                .append(myAdverts)
+                .append(myPurchases);
+
+            showUserDetailsView();
+        }
+    }
+
+
+    //User details for different users
+    else{
+
+        let advertisementsQuery=`?query={"_acl.creator":"${userId}"}`;
+        let userAdvertsRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements'+advertisementsQuery,
+            headers:getKinveyAuthHeaders()
+        };
+        let advertisementsPromise=$.ajax(userAdvertsRequest);
+
+        let userRequest={
+            method:"GET",
+            url:kinveyBaseUrl+'user/'+kinveyAppKey+'/'+userId,
+            headers:getKinveyAuthHeaders()
+        };
+        let userPromise=$.ajax(userRequest);
+
+        Promise.all([advertisementsPromise,userPromise])
+            .then(userDetailsLoadSuccess);
+
+
+        //Success callback
+
+        function userDetailsLoadSuccess([advertisements,user]){
+            showInfo('User profile loaded');
+
+            let userDetails=$('#userDetails');
+            userDetails.empty();
+
+
+            let userAdverts=$('<div id="userAdverts">')
+                .css('display','inline-block')
+                .append($('<h3>').text('User adverts'));
+
+            let advertTable=$('<table>');
+
+            if(advertisements.length>0){
+                advertTable
+                    .append($('<tr>')
+                        .append($('<th>').text('Title'))
+                        .append($('<th>').text('Description'))
+                        .append($('<th>').text('Date Published'))
+                        .append($('<th>').text('Price'))
+                    );
+                for(let advert of advertisements){
+                    advertTable
+                        .append($('<tr>')
+                            .append($('<td>').append($(`<a href="#/ads/${advert._id}">`).text(advert.title)))
+                            .append($('<td>').text(textCutter(advert.description)))
+                            .append($('<td>').text(formatDate(advert._kmd.lmt)))
+                            .append($('<td>').text(advert.price))
+                        );
+                }
+            }
+            else{
+                advertTable.append($('<tr>').append($('<td>').text('No advertisements')));
+            }
+            userAdverts.append(advertTable);
+
+            userDetails
+                .append($('<h1>').text(user.username))
+                .append(userAdverts);
+
+            showUserDetailsView();
+        }
+    }
+
+}
+
+function cancelPurchase(purchaseId,userId){
+    let deleteRequest={
+        method:"DELETE",
+        url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userPurchases/'+purchaseId,
+        headers:getKinveyAuthHeaders()
+    };
+    $.ajax(deleteRequest)
+        .then(deleteSuccess);
+    function deleteSuccess(){
+        $(location).attr('href',`#/user/${userId}?deleteReq=true`);
+        $(location).attr('href',`#/user/${userId}`);
+        showInfo('Purchase canceled.')
+    }
+}

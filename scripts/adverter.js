@@ -23,7 +23,7 @@ function startApp() {
         ajaxStop:function(){$('#loadingBox').hide()}
     });
     $(document).ajaxError(handleAjaxError);
-
+    $('#loggedInUser').on('click',function(){$(location).attr('href',`#/user/${sessionStorage.getItem('userId')}`);});
 
     let sammyApp=Sammy('main',function(){
         this.get('#/',function(){
@@ -97,7 +97,14 @@ function startApp() {
             }
             
         });
-        
+        this.get('#/user/:id',function(){
+            if(sessionStorage.getItem('userId')){
+                getUserDetails(this.params.id);
+            }
+            else{
+                this.redirect('#/home');
+            }
+        });
 
     });
     

@@ -201,3 +201,29 @@ input[type=submit]:hover{
     width: 40%;
     text-align: center;
 }
+#userDetails input{
+    background: #DDDDDD;
+    color: black;
+}
+#userDetails{
+    text-align: center;
+}
+#userDetails a{
+    text-decoration: none;
+}
+
+#userDetails input {
+    padding: 0px;
+    padding-left: 7px;
+    padding-right: 7px;
+    margin: 0px;
+}
+#viewAds a{
+    text-decoration: none;
+}
+#viewDetailsAd a{
+    text-decoration: none;
+}
+
+
+

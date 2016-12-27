@@ -22,7 +22,6 @@ function showView(viewName){
 }
 
 function showHomeView(){
-    
     showView('viewHome')
 }
 function showLoginView(){
@@ -36,4 +35,10 @@ function showRegisterView(){
 function showCreateAdView(){
     $('#formCreateAd').trigger('reset');
     showView('viewCreateAd')
+}
+function showDetailsAdView(){
+    showView('viewDetailsAd');
+}
+function showUserDetailsView(){
+    showView('userDetails');
 }
