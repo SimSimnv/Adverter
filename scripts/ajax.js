@@ -43,7 +43,7 @@ function listAds(){
         let detailsLink=$(`<a href="#/ads/${ad._id}">`).text('[Read More]')
         links.push(detailsLink);
         if(ad._acl.creator == sessionStorage.getItem('userId')){
-            let deleteLink=$('<a href="#">').text('[Delete]').on('click',function(){deleteAdd(ad)});
+            let deleteLink=$(`<a href="#/ads/delete/${ad._id}">`).text('[Delete]');
             let editLink=$(`<a href="#/ads/edit/${ad._id}">`).text('[Edit]');
             links.push(' ');
             links.push(deleteLink);
@@ -110,6 +110,25 @@ function loadAddForEdit(advertId){
     $.ajax(getRequest);
 }
 
+function loadAddForDelete(advertId){
+    let getRequest={
+        method:"GET",
+        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+advertId,
+        headers:getKinveyAuthHeaders(),
+        success:loadAddForDeleteSuccess
+    };
+    function loadAddForDeleteSuccess(ad){
+        $('#formDeleteAd input[name=id]').val(ad._id);
+        $('#formDeleteAd input[name=publisher]').val(ad.publisher);
+        $('#formDeleteAd input[name=title]').val(ad.title);
+        $('#formDeleteAd textarea[name=description]').val(ad.description);
+        $('#formDeleteAd input[name=price]').val(ad.price);
+        $('#formDeleteAd input[name=image]').val(ad.image);
+        showView('viewDeleteAd');
+    }
+    $.ajax(getRequest);
+}
+
 function editAdd(ev){
     ev.preventDefault();
 
@@ -142,10 +161,13 @@ function editAdd(ev){
     }
 }
 
-function deleteAdd(add){
+function deleteAdd(ev){
+    ev.preventDefault();
+    let id=$('#formDeleteAd input[name=id]').val();
+    
     let deleteRequest={
         method:"DELETE",
-        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+add._id,
+        url:kinveyBaseUrl+'appdata/'+kinveyAppKey+'/advertisements/'+id,
         headers:getKinveyAuthHeaders(),
         success:deleteAddSuccess
     };
@@ -213,6 +235,8 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append(publisher)
             .append(date);
 
+
+
         //Attach advert buttons
 
         let showReviewsButton=$('<input type="button">').val('User Reviews').on('click',showHideReviews);
@@ -223,6 +247,7 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append(showReviewsButton)
             .append(addReviewButton)
             .append(showPurchaseOptionButton);
+        
 
         //Attach the create and edit review form
 

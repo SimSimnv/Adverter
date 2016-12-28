@@ -13,6 +13,7 @@ function startApp() {
      $('#buttonRegisterUser').click(registerUser);
      $('#buttonCreateAd').click(createAdd);
      $('#buttonEditAd').click(editAdd);
+     $('#buttonDeleteAd').click(deleteAdd);
 
     //Default actions
     $('#infoBox,#errorBox').click(function(){
@@ -73,6 +74,15 @@ function startApp() {
         this.get('#/ads/edit/:id',function(){
             if(sessionStorage.getItem('userId')){
                 loadAddForEdit(this.params.id);
+            }
+            else{
+                this.redirect('#/home');
+            }
+        });
+
+        this.get('#/ads/delete/:id',function(){
+            if(sessionStorage.getItem('userId')){
+                loadAddForDelete(this.params.id);
             }
             else{
                 this.redirect('#/home');
