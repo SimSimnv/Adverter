@@ -5,24 +5,29 @@ const kinveyAppAuthHeaders={'Authorization':'Basic '+btoa(kinveyAppKey+':'+kinve
 
 function registerUser(ev){
     ev.preventDefault();
-    let userData={
-        username:$('#viewRegister input[name=username]').val(),
-        password:$('#viewRegister input[name=passwd]').val()
-    };
-    let url=kinveyBaseUrl+'user/'+kinveyAppKey+'/';
-    let postRequest={
-        method:"POST",
-        url,
-        data:userData,
-        headers:kinveyAppAuthHeaders,
-        success:registerSuccess
-    };
-    $.ajax(postRequest);
-    function registerSuccess(userInfo){
-        saveAuthInSession(userInfo);
-        showHideMenuLinks();
-        $(location).attr('href',`#/ads`);
-        showInfo('User registration successful.')
+    let username=$('#viewRegister input[name=username]').val();
+    let password=$('#viewRegister input[name=passwd]').val();
+    let email=$('#viewRegister input[name=email]').val();
+    
+    if(validateUser(username,password,email)){
+        let fullname=$('#viewRegister input[name=fullName]').val();
+        
+        let userData={username, password, email,fullname};
+        let url=kinveyBaseUrl+'user/'+kinveyAppKey+'/';
+        let postRequest={
+            method:"POST",
+            url,
+            data:userData,
+            headers:kinveyAppAuthHeaders,
+            success:registerSuccess
+        };
+        $.ajax(postRequest);
+        function registerSuccess(userInfo){
+            saveAuthInSession(userInfo);
+            showHideMenuLinks();
+            $(location).attr('href',`#/ads`);
+            showInfo('User registration successful.')
+        }
     }
 }
 function loginUser(ev){

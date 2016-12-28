@@ -12,6 +12,7 @@ function handleAjaxError(event,response){
 function showError(errorMsg){
     $('#errorBox').text("Error: "+errorMsg);
     $('#errorBox').show();
+    $("html, body").animate({ scrollTop: 0 }, "fast");
 }
 function showInfo(info){
     $('#infoBox').text(info);
@@ -39,6 +40,23 @@ function validateData(title,description,publisher,price){
     }
     if(price.length==0 || typeof Number(price)!='number'){
         showError('Incorrect price.');
+        return false;
+    }
+    return true;
+}
+function validateUser(username,password,email){
+    let validatorRegex=/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if(username.length==0){
+        showError('Incorrect username!');
+        return false;
+    }
+    if(password.length==0){
+        showError('Incorrect password!');
+        return false;
+    }
+    if(!validatorRegex.test(email)){
+        showError('Incorrect email!');
         return false;
     }
     return true;

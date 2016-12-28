@@ -247,7 +247,7 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append(showReviewsButton)
             .append(addReviewButton)
             .append(showPurchaseOptionButton);
-        
+
 
         //Attach the create and edit review form
 
@@ -531,6 +531,23 @@ function getUserDetails(userId){
             let userDetails=$('#userDetails');
             userDetails.empty();
 
+            //User information
+
+            let userInfo=$('<div id="userInfo">')
+                .append($('<h1>').text(user.username));
+            if(user.fullname.length>0){
+                userInfo
+                    .append($('<table>')
+                        .append($('<tr>').append($('<td>').text('Fullname:  ')).append($('<td>').text(user.fullname)))
+                        .append($('<tr>').append($('<td>').text('Email:  ')).append($('<td>').text(user.email)))
+                    )
+            }
+            else{
+                userInfo
+                    .append($('<table>')
+                        .append($('<tr>').append($('<td>').text('Email:  ')).append($('<td>').text(user.email)))
+                    )
+            }
 
 
             //User Advertisements
@@ -639,7 +656,7 @@ function getUserDetails(userId){
             myPurchases.append(purchasesTable);
 
             userDetails
-                .append($('<h1>').text(user.username))
+                .append(userInfo)
                 .append(myAdverts)
                 .append(myPurchases);
 
@@ -674,11 +691,29 @@ function getUserDetails(userId){
 
         function userDetailsLoadSuccess([advertisements,user]){
             showInfo('User profile loaded');
-
+            
             let userDetails=$('#userDetails');
             userDetails.empty();
 
+            //User information
+            
+            let userInfo=$('<div id="userInfo">')
+                .append($('<h1>').text(user.username));
+            if(user.fullname.length>0){
+                userInfo
+                    .append($('<table>')
+                        .append($('<tr>').append($('<td>').text('Fullname:  ')).append($('<td>').text(user.fullname)))
+                        .append($('<tr>').append($('<td>').text('Email:  ')).append($('<td>').text(user.email)))
+                    )
+            }
+            else{
+                userInfo
+                    .append($('<table>')
+                        .append($('<tr>').append($('<td>').text('Email:  ')).append($('<td>').text(user.email)))
+                    )
+            }
 
+                
             let userAdverts=$('<div id="userAdverts">')
                 .css('display','inline-block')
                 .append($('<h3>').text('User adverts'));
@@ -709,7 +744,7 @@ function getUserDetails(userId){
             userAdverts.append(advertTable);
 
             userDetails
-                .append($('<h1>').text(user.username))
+                .append(userInfo)
                 .append(userAdverts);
 
             showUserDetailsView();
