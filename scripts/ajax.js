@@ -50,8 +50,8 @@ function listAds(){
         }
 
         let tr=$('<tr>')
-            .append($('<td>').text(textCutter(ad.title,40)))
-            .append($('<td>').text(textCutter(ad.description,80)))
+            .append($('<td>').text(textCutter(ad.title,20)))
+            .append($('<td>').text(textCutter(ad.description,40)))
             .append($('<td>').append($(`<a href="#/user/${ad._acl.creator}">`).text(ad.publisher)))
             .append($('<td>').text(ad.date))
             .append($('<td>').text(ad.price))
@@ -193,10 +193,10 @@ function getDetailsAdd(advertId,showReviewsBool){
 
         let title=$('<tr>')
             .append($('<th>').text('Title'))
-            .append($('<td>').text(ad.title));
+            .append($('<td>').text(textCutter(ad.title,60)));
         let price=$('<tr>')
             .append($('<th>').text('Price'))
-            .append($('<td>').text(ad.price));
+            .append($('<td>').text(Number(ad.price).toFixed(2)));
         let description=$('<tr>')
             .append($('<th>').text('Description'))
             .append($('<td>').append($('<textarea disabled="true">').val(ad.description)));
@@ -556,7 +556,7 @@ function getUserDetails(userId){
 
                     advertTable
                         .append($('<tr>')
-                            .append($('<td>').append($(`<a href="#/ads/${advert._id}">`).text(advert.title)))
+                            .append($('<td>').append($(`<a href="#/ads/${advert._id}">`).text(textCutter(advert.title,20))))
                             .append($('<td>').text(advert.price))
                             .append($('<td>').append($('<input type="button">')
                                 .val(advertSales.length)
@@ -600,10 +600,10 @@ function getUserDetails(userId){
                 for(let purchase of purchases){
                     purchasesTable
                         .append($('<tr>')
-                            .append($('<td>').append($(`<a href="#/ads/${purchase.advertId}">`).text(purchase.title)))
+                            .append($('<td>').append($(`<a href="#/ads/${purchase.advertId}">`).text(textCutter(purchase.title,20))))
                             .append($('<td>').text(purchase.quantity))
-                            .append($('<td>').text(purchase.price))
-                            .append($('<td>').text(Number(purchase.price)*Number(purchase.quantity)))
+                            .append($('<td>').text(Number(purchase.price).toFixed(2)))
+                            .append($('<td>').text((Number(purchase.price)*Number(purchase.quantity)).toFixed(2)))
                             .append($('<td>').append($('<input type="button">').val('Cancel purchase').on('click',function(){cancelPurchase(purchase._id,userId)})))
                         );
                 }
