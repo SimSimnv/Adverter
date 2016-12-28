@@ -24,7 +24,7 @@ function textCutter(text,maxLength){
     }
     return text;
 }
-function validateData(title,description,publisher,date,price){
+function validateData(title,description,publisher,price){
     if(title.length==0 || typeof title!='string'){
         showError('Incorrect title.');
         return false;
@@ -35,10 +35,6 @@ function validateData(title,description,publisher,date,price){
     }
     if(publisher.length==0 || typeof publisher!='string'){
         showError('Incorrect publisher.');
-        return false;
-    }
-    if(date.length==0 || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)){
-        showError('Incorrect date.');
         return false;
     }
     if(price.length==0 || typeof Number(price)!='number'){
@@ -59,4 +55,9 @@ function formatDate(dateISO8601) {
         return ('0' + num).slice(-2);
     }
 }
-
+function sortByDate(date1,date2){
+    date1=new Date(date1);
+    date2=new Date(date2);
+    
+    return date1.getTime()-date2.getTime();
+}

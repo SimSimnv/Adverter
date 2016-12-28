@@ -18,6 +18,8 @@ function listAds(){
             $('#books').text('No advertisements available');
         }
         else{
+            ads=ads.sort((a,b)=>sortByDate(b._kmd.lmt,a._kmd.lmt));
+            
             let adsTable=$('<table>');
             let tr=$('<tr>')
                 .append($('<th>').text('Title'))
@@ -53,7 +55,7 @@ function listAds(){
             .append($('<td>').text(textCutter(ad.title,20)))
             .append($('<td>').text(textCutter(ad.description,40)))
             .append($('<td>').append($(`<a href="#/user/${ad._acl.creator}">`).text(ad.publisher)))
-            .append($('<td>').text(ad.date))
+            .append($('<td>').text(formatDate(ad._kmd.lmt)))
             .append($('<td>').text(ad.price))
             .append($('<td>').append(links));
         adsTable.append(tr);
@@ -65,13 +67,12 @@ function createAdd(ev){
     let title=$('#formCreateAd input[name=title]').val();
     let description=$('#formCreateAd textarea[name=description]').val();
     let publisher=sessionStorage.getItem('username');
-    let date=$('#formCreateAd input[name=datePublished]').val();
     let price=$('#formCreateAd input[name=price]').val();
     let image=$('#formCreateAd input[name=image]').val();
 
-    if(validateData(title,description,publisher,date,price)) {
+    if(validateData(title,description,publisher,price)) {
         price=parseFloat(price).toFixed(2);
-        let addData = {title, description, publisher, date, price,image};
+        let addData = {title, description, publisher, price,image};
 
         let postRequest = {
             method: "POST",
@@ -102,7 +103,6 @@ function loadAddForEdit(advertId){
         $('#formEditAd input[name=publisher]').val(ad.publisher);
         $('#formEditAd input[name=title]').val(ad.title);
         $('#formEditAd textarea[name=description]').val(ad.description);
-        $('#formEditAd input[name=datePublished]').val(ad.date);
         $('#formEditAd input[name=price]').val(ad.price);
         $('#formEditAd input[name=image]').val(ad.image);
         showView('viewEditAd');
@@ -118,13 +118,12 @@ function editAdd(ev){
 
     let title=$('#formEditAd input[name=title]').val();
     let description=$('#formEditAd textarea[name=description]').val();
-    let date=$('#formEditAd input[name=datePublished]').val();
     let price=$('#formEditAd input[name=price]').val();
     let image=$('#formEditAd input[name=image]').val();
 
-    if(validateData(title,description,publisher,date,price)) {
+    if(validateData(title,description,publisher,price)) {
         price=parseFloat(price).toFixed(2);
-        let editData = {title, description, publisher, date, price,image};
+        let editData = {title, description, publisher, price,image};
 
         let putRequest = {
             method: "PUT",
@@ -205,7 +204,7 @@ function getDetailsAdd(advertId,showReviewsBool){
             .append($('<td>').append($(`<a href="#/user/${ad._acl.creator}">`).text(ad.publisher)));
         let date=$('<tr>')
             .append($('<th>').text('Date'))
-            .append($('<td>').text(ad.date));
+            .append($('<td>').text(formatDate(ad._kmd.lmt)));
 
         let infoDiv=$('<table id="advertInfo">')
             .append(title)
