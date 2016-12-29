@@ -1,6 +1,6 @@
 const kinveyBaseUrl='https://baas.kinvey.com/';
-const kinveyAppKey='kid_BJp9nsvr';
-const kinveyAppSecret='4a62943b30954e60a7a5b1994b36cb2c';
+const kinveyAppKey='kid_B1Oj5ufSg';
+const kinveyAppSecret='d067a57d94cf4e5b9368226109d5a35f';
 const kinveyAppAuthHeaders={'Authorization':'Basic '+btoa(kinveyAppKey+':'+kinveyAppSecret)};
 
 function registerUser(ev){

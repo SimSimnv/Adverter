@@ -389,21 +389,23 @@ function getDetailsAdd(advertId,showReviewsBool){
 
 function createReview(advertId){
     let text=$('#createReviewForm textarea[name=body]').val();
-    let postData={author:sessionStorage.getItem('username'),text,advertId};
-    let postRequest={
-        method:"POST",
-        url: kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews',
-        headers:getKinveyAuthHeaders(),
-        data:postData
-    };
-    $.ajax(postRequest)
-        .then(createReviewSuccess);
+    if(text.length>0){
+        let postData={author:sessionStorage.getItem('username'),text,advertId};
+        let postRequest={
+            method:"POST",
+            url: kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews',
+            headers:getKinveyAuthHeaders(),
+            data:postData
+        };
+        $.ajax(postRequest)
+            .then(createReviewSuccess);
 
-    function createReviewSuccess(){
-        showInfo('Review created.');
+        function createReviewSuccess(){
+            showInfo('Review created.');
 
-        $(location).attr('href',`#/ads/${advertId}`);
-        $(location).attr('href',`#/ads/${advertId}?showRev=true`);
+            $(location).attr('href',`#/ads/${advertId}`);
+            $(location).attr('href',`#/ads/${advertId}?showRev=true`);
+        }
     }
 }
 
@@ -428,24 +430,26 @@ function deleteReview(advertId,reviewId){
 function editReview(advertId,reviewId){
 
     let text=$('#editReviewForm textarea[name=body]').val();
-    let author=sessionStorage.getItem('username');
-    let putData={author,text,advertId};
+    if(text.length>0){
+        let author=sessionStorage.getItem('username');
+        let putData={author,text,advertId};
 
-    let putRequest={
-        method:"PUT",
-        url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews/'+reviewId,
-        headers:getKinveyAuthHeaders(),
-        data:putData
-    };
-    
-    $.ajax(putRequest)
-        .then(editSuccess);
-    
-    function editSuccess(){
-        showInfo('Review edited.')
+        let putRequest={
+            method:"PUT",
+            url:kinveyBaseUrl + 'appdata/' + kinveyAppKey + '/userReviews/'+reviewId,
+            headers:getKinveyAuthHeaders(),
+            data:putData
+        };
 
-        $(location).attr('href',`#/ads/${advertId}`);
-        $(location).attr('href',`#/ads/${advertId}?showRev=true`);
+        $.ajax(putRequest)
+            .then(editSuccess);
+
+        function editSuccess(){
+            showInfo('Review edited.')
+
+            $(location).attr('href',`#/ads/${advertId}`);
+            $(location).attr('href',`#/ads/${advertId}?showRev=true`);
+        }
     }
 }
 

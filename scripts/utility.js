@@ -38,7 +38,7 @@ function validateData(title,description,publisher,price){
         showError('Incorrect publisher.');
         return false;
     }
-    if(price.length==0 || typeof Number(price)!='number'){
+    if(price.length==0 || typeof Number(price)!='number' || Number(price)<=0){
         showError('Incorrect price.');
         return false;
     }
