@@ -1,5 +1,16 @@
 # Adverter
-A single page application made with javascript, jquery, AJAX, REST, Kinvey and Sammy. The API consist of creating, listing, editing and deleting of advertisements and user reviews(CRUD).
+A simple js webstore SPA 
 
-Public account: guest	
-Password: guest
+## Build with
+* javascript
+* jquery
+* AJAX
+* Kinvey database REST api
+* Sammy js
+
+## Functionality
+
+* User registration / login and user profiles.
+* Creating, listing, editing and deleting of advertisements and user reviews
+
+Link to live project: http://adverter.simsim.cloudvps.bg
